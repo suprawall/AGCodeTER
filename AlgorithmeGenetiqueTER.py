@@ -67,23 +67,12 @@ def getCommuPondéré(genome, pd):
     proba = [p/total for p in proba]
     choix = random.random()
     somme_proba = 0
-    """print("voici le génome : "+str(genome))
-    print("Voice la roue trié : "+str(roue_trie)+", voici la distribution de proba : "+str(proba))"""
     for i, p in enumerate(proba):
         somme_proba += p
         if(choix <= somme_proba):
-            """print("alétoirement c'est : "+str(list(roue_trie.values())[i])+", qui a été choisi")
-            exit(1)"""
             return list(roue_trie.keys())[i]
-    print("rien n'a été return....voici le génome "+str(genome)+", voici le choix, la distribution de proba : "+str(choix)+str(proba))
     
 def getCommuByEntropieSelection(genome, P, colorProfil, r):
-    """result =[]
-    for p in P:
-        h = H({p}, colorProfil, r, Gamma)
-        if(h != inf):
-            result.append((p, h))
-    sorted_result = dict(sorted(result.items(), key=lambda item: item[1]))"""
     
     best = None
     min = None
@@ -95,72 +84,8 @@ def getCommuByEntropieSelection(genome, P, colorProfil, r):
     best_list = list(best)
     return genome[best_list[0]]
     
-    
-    
-    
-def Crossover3(graph, g1: list, g2: list) -> tuple:
-    c1 = max(set(g1), key=g1.count)
-    c2 = max(set(g2), key=g1.count)
-    e1 = [-1 for _ in range(len(g1))]
-    e2 = [-1 for _ in range(len(g1))]
-    
-    #Remplissage e1
-    for i, elm in enumerate(g1):       
-        if(elm == c1):
-            e1[i] = c1
-    for i, elm in enumerate(g2):        
-        if(e1[i] == -1):              #(elm != c1 and e1[i] == -1):
-            e1[i] = elm
-            if(not Isviable(graph, e1)):
-                e1[i] == -1
-    for i, elm in enumerate(e1):
-        if(elm == -1):
-            union = union_list(g1, g2)
-            print(union)
-            while(True):
-                if not union:
-                    print(g1)
-                    print(g2)
-                    print(str(e1)+" dans ce génome le noeud "+str(i)+" n'a pas réussi à trouver une communauté qui rend le génome viable, de e1")
-                    exit(1)
-                c = rd.choice(union)
-                e1[i] = c
-                if(Isviable(graph, e1)):
-                    print("le noeud "+str(i)+" à été assigné au hasard et le génome est viable : "+str(e1))
-                    break
-                else:
-                    union.remove(c)
-                    print(union)
-    
-    #Remplissage e2
-    for i, elm in enumerate(g2):       
-        if(elm == c2):
-            e2[i] = c2
-    for i, elm in enumerate(g1):       
-        if(e2[i] == -1):          #(elm != c2 and e2[i] == -1):
-            e2[i] = elm
-            if(not Isviable(graph, e2)):
-                e2[i] == -1
-    for i, elm in enumerate(e2):
-        if(elm == -1):
-            union = union_list(g1, g2)
-            while(True):
-                if not union:
-                    print(g1)
-                    print(g2)
-                    print(str(e2)+" dans ce génome le noeud "+str(i)+" n'a pas réussi à trouver une communauté qui rend le génome viable, de e2")
-                    exit(1)
-                c = rd.choice(union)
-                e2[i] = c
-                if(Isviable(graph, e2)):
-                    print("le noeud "+str(i)+" à été assigné au hasard et le génome est viable : "+str(e2))
-                    break
-                else:
-                    union.remove(c)
-                    print(union)
-    return(e1, e2)
 
-def Crossover2(graph, g1: list, g2: list, pondération: bool, entropieSelection: bool, colorProfile: any, r: int) -> tuple:
+def Crossover(graph, g1: list, g2: list, pondération: bool, entropieSelection: bool, colorProfile: any, r: int) -> tuple:
     
     if(entropieSelection):
         c1 = getCommuByEntropieSelection(g1, genereCommunauté(g1), colorProfile, r)
@@ -215,104 +140,7 @@ def Crossover2(graph, g1: list, g2: list, pondération: bool, entropieSelection:
                 if(commu_des_voisins):
                     choix = rd.choice(commu_des_voisins)
                     e2[i] = choix
-                    
-    """if(not Isviable(graph, e1)):
-        print("e1 n'est pas viable ! g1 : "+str(g1)+", g2 : "+str(g2)+" = e1 : "+str(e1))
-        exit(1)
-    else:
-        print("e1 est viable ! g1 : "+str(g1)+", g2 : "+str(g2)+" = e1 : "+str(e1))
-        exit(1)"""
     return(e1, e2)
-
-# ! Basic functions =========================================================
-def CrossOver(graph, g1: list, g2: list) -> tuple:
-    """Perform a cross over between g1 and g2
-
-    Args:
-        g1 (list): digital genome
-        g2 (list): digital genome
-
-    Returns:
-        tuple: a pair of genomes.
-    """
-    
-    """n = min(len(g1), len(g2))
-    split = randint(1, n - 1)
-    return (g1[:split] + g2[split:], g2[:split] + g1[split:])"""
-    
-    c1 = max(set(g1), key=g1.count)
-    c2 = max(set(g2), key=g1.count)
-    e1 = [-1 for _ in range(len(g1))]
-    e2 = [-1 for _ in range(len(g1))]
-    union = union_list(g1, g2)
-    for i, elm in enumerate(g1):
-        if(elm == c1):
-            e1[i] = c1
-        elif(g2[i] == c1):
-            commu = list(set(union))
-            e1[i] = g2[i]
-            if(not IsviableSingle(graph, e1, i, g2[i])):
-                commu.remove(c1)
-                e1[i] = elm
-                if(not IsviableSingle(graph, e1, i, elm)):
-                    commu.remove(elm)
-                    while(True):
-                        if not commu:
-                            voisins = list(graph.neighbors(i))
-                            while(True):
-                                ch = rd.choice(voisins)
-                                c = g2[ch]
-                                if(c == -1):
-                                    voisins.remove(ch)
-                                else:
-                                    e1[i] = c
-                                    break
-                        if not commu:
-                            break
-                        choix = rd.choice(commu)
-                        e1[i] = choix
-                        if(IsviableSingle(graph, e1, i, choix)):
-                            break
-                        else:
-                            print("e1 : "+str(e1)+", le choix : "+str(choix)+", n'a pas marché, mise à jour de commu : "+str(commu))
-                            commu.remove(choix)
-        else:
-            e1[i] = g2[i]
-    for i, elm in enumerate(g2):
-        if(elm == c2):
-            e2[i] = c2
-        elif(g1[i] == c2):
-            e2[i] = g1[i]
-            if(not IsviableSingle(graph, e2, i, g1[i])):
-                commu = list(set(union))
-                e2[i] = elm
-                if(not IsviableSingle(graph, e2, i, elm)):
-                    commu.remove(elm)
-                    while(True):
-                        if not commu:
-                            voisins = list(graph.neighbors(i))
-                            while(True):
-                                ch = rd.choice(voisins)
-                                c = g1[ch]
-                                if(c == -1):
-                                    voisins.remove(ch)
-                                else:
-                                    e2[i] = c
-                                    break
-                        if not commu:
-                            break
-                        choix = rd.choice(commu)
-                        e2[i] = choix
-                        if(IsviableSingle(graph, e2, i, choix)):
-                            break
-                        else:
-                            commu.remove(choix)
-        else:
-            e2[i] = g1[i]
-    if(Isviable(graph, e1) == False):
-        print("e1 n'est pas viable ! g1 : "+str(g1)+", g2 : "+str(g2)+" = e1 : "+str(e1))
-        exit(1)
-    return (e1, e2)
 
 
 def Mutate(graph, g: list, values: list | tuple) -> list:
@@ -385,6 +213,10 @@ def GeneticAlgorithm(
         pop0 (list): initial population
         values (list|tuple): values taken by the elements of the genome
         f (_type_): fitness function
+        colorProfile(any): color profile of the gaph
+        graph
+        r(int): numbers of colors
+        selectionByEntropie: wether or not the selection in crossover must be by entropie or by numbers of nodes in a community
         viability (tuple, optional): viability function. Defaults to (lambda p:True).
         maxbound (int): maximal number of iteration. Defaults to 1.0
         darwinianrate (float, optional):  rate of Darwinian selection. Defaults to 1.0.
@@ -443,7 +275,7 @@ def GeneticAlgorithm(
         for _ in range(nb):
             i1 = randint(0, n - 1)
             i2 = randint(0, n - 1)
-            (newpop[i1], newpop[i2]) = Crossover2(graph, newpop[i1], newpop[i2], pondération=True, entropieSelection=selectionByEntropie, colorProfile=colorProfile, r=r)
+            (newpop[i1], newpop[i2]) = Crossover(graph, newpop[i1], newpop[i2], pondération=True, entropieSelection=selectionByEntropie, colorProfile=colorProfile, r=r)
         
         nb = floor(n * mutaterate)
         for _ in range(nb):
@@ -455,10 +287,6 @@ def GeneticAlgorithm(
 
         pop = newpop  # the offsprings become the parents
     # ! end of main loop
-
-    """GATRACE.append(
-        list(filter(viable, pop))
-    )  # keep the last viable population in the trace."""
 
     min = None  # final selection of the best genome
     solution = None
@@ -474,23 +302,6 @@ def GeneticAlgorithm(
 
 
 def GetTrace() -> list:
-    """Get the last trace of Genetic Algorithm run.
-
-    Returns:
-        list : a trace = list of populations
-    """
-    """tabMeilleurs = []
-    for population in GATRACE:
-        min = None
-        for genome in population:
-            score = H(genereCommunauté(genome), colorProfile, r, Gamma)
-            if score == inf:
-                continue
-            elif min is None or min > score:
-                min = score
-        tabMeilleurs.append(min)
-            
-    return tabMeilleurs"""
     return GATRACE
 
 def genereCommunauté(genome):
@@ -500,10 +311,7 @@ def genereCommunauté(genome):
     return result_set
 
 
-def Isviable(graph, genome):
-    #adjacency_matrix = nx.adjacency_matrix(graph)
-    #nodes = graph.nodes()
-    
+def Isviable(graph, genome): 
     Ensemble = []
     g = genome.copy()
     
@@ -512,9 +320,6 @@ def Isviable(graph, genome):
             continue
         if( any(i in e for e in Ensemble) ):
             continue
-        else:
-            #print(str(i)+" n'est dans aucun e de Ensemble : "+str(Ensemble))
-            pass
         frontiere = []
         explorer = []
         frontiere.append(i)
@@ -526,34 +331,24 @@ def Isviable(graph, genome):
                 if( (genome[v] == genome[n]) and (v not in explorer) and (v not in frontiere)):
                     frontiere.append(v)
         Ensemble.append(explorer)
-    #print("voici les ensembles troubver : "+str(Ensemble))
     
     for ens1 in Ensemble:
         for ens2 in Ensemble:
             if( (ens1 != ens2) and (genome[ens1[0]] == genome[ens2[0]]) ):
-                #print(str(ens1)+" et "+str(ens2)+" sont de la meme communauté sans être attaché")
                 return False
     return True
 
 def IsviableSingle(graph, genome, noeud, communauté_du_noeud):
-    nodes = graph.nodes()
-    
     voisins = list(graph.neighbors(noeud))
     for j, commu in enumerate(genome):
         if( (commu != -1) and (commu == communauté_du_noeud) and (j not in voisins) and (noeud != j) ):
-            #print("génome False : "+str(genome)+" noeud en cour : "+str(noeud)+" voici ses voisins : "+str(voisins)+"   erreur avec le noeud : "+str(j)+"  /  "+str(nodes[noeud]['color'])+" != "+str(nodes[j]['color'])+" ?")
             return False
-    """print(genome)
-    print(voisins)
-    print("=================")"""
     return True
 
 def getViablegenome(graph, tabMaxCommu):
     viableGenome = [-1 for _ in range(len(graph.nodes()))]
-    #commuDispo = [i+1 for i in range(nbCommu)]
     longueur = len(viableGenome)
     start = randint(0, longueur - 1)
-    nodes = graph.nodes()
     explorer = []
     trace = []
     
@@ -561,16 +356,12 @@ def getViablegenome(graph, tabMaxCommu):
     viableGenome[start] = rd.choice(tabMaxCommu)
     explorer.append(start)
     while(largeur):
-        """print(largeur)
-        print(viableGenome)
-        print("=================")"""
         trace.append(largeur.copy())
         noeud = largeur.pop(0)
         copy = tabMaxCommu.copy()
         voisins_de_noeud = list(graph.neighbors(noeud))
         while(True):
             if not copy:
-                #print("copy est vide on met une des valeurs des voisins")
                 v = voisins_de_noeud.copy()
                 while(True):
                     ch = rd.choice(v)
@@ -593,32 +384,6 @@ def getViablegenome(graph, tabMaxCommu):
             if v not in explorer and v not in largeur:
                 largeur.append(v) 
     
-    #print(viableGenome)
-    if(-1 in viableGenome):
-        print(explorer)
-        print(trace)
-        print("il y a encore des -1 : "+str(viableGenome))
-        print("==========")
-    #displayResult(graph, genereCommunauté(viableGenome), dict(zip(G, GD)))
-    return viableGenome
-
-def getViableGenome2(graph, tabMaxCommu):
-    viableGenome = [-1 for _ in range(len(graph.nodes()))]
-    longueur = len(viableGenome)
-    start = randint(0, longueur - 1)
-    viableGenome[start] = rd.choice(tabMaxCommu)
-    noeud_a_choisir = [i for i in range(len(viableGenome))]
-    noeud_a_choisir.remove(start)
-    
-    while(-1 in viableGenome):
-        n = rd.choice(noeud_a_choisir)
-        choix = tabMaxCommu.copy()
-        c = rd.choice(choix)
-        viableGenome[n] = c
-        while(not Isviable(graph, viableGenome)):
-            choix.remove(c)
-            c = rd.choice(choix)
-            viableGenome[n] = c
     return viableGenome
     
 def displayResult(graph, setCommunauté, entropie, position):
@@ -672,7 +437,6 @@ for i in range(ITERATION):
     genome = []
     pop0 = []
     progression = popsize / 10
-    #print(IsviableSingle(G, [2, 6, 5, 5, -1, -1, 1, 4, 3], 3, 5))
 
     for i in range(popsize):
         if(len(pop0) > progression):
