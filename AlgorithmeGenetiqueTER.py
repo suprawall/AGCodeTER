@@ -101,13 +101,13 @@ def Crossover(graph, g1: list, g2: list, pondération: bool, entropieSelection: 
     e1 = [-1 for _ in range(len(g1))]
     e2 = [-1 for _ in range(len(g1))]
     
-    for i, elm in enumerate(g1):        #On commence par mettre l'élément prépondérant de g1, c1, aux endroits adéquats
+    for i, elm in enumerate(g1):        
         if(elm == c1):
             e1[i] = c1
-    for i, elm in enumerate(g2):        #Ensuite on met les éléments de g2 au bon endroit si ils ne sont pas égals à c1
+    for i, elm in enumerate(g2):        
         if(elm != c1):
             e1[i] = elm
-    while(-1 in e1):                    #Tant qu'il reste des noeuds non-attribué on leur mets une communautés aux hasard dans leurs voisins qui sont attribués
+    while(-1 in e1):                   
         for i, elm in enumerate(e1):
             if(elm == -1):
                 voisins = graph.neighbors(i)
@@ -407,18 +407,19 @@ def displayResult(graph, setCommunauté, entropie, position):
     DrawChroCoS(G, P, pos=position)
     plt.show()
     
-ITERATION = 8
+ITERATION = 1
+POPSIZE = 5000
+NB_GENERATION = 35
 minimums = None
 moyennes = None
 
 for i in range(ITERATION):
-    n = 7
+    n = 40
     r = 4
 
-    GD = nx.grid_2d_graph(n, n)
-    G = nx.convert_node_labels_to_integers(GD)
+    G = nx.connected_watts_strogatz_graph(n, 2, 0.6)
 
-    position = nx.spring_layout(G)
+    position = nx.circular_layout(G)
     #gridposition = dict(zip(G, GD))  # define position as label of the initial graph
 
     seeds = GenerateSeeds(G, r)
@@ -432,7 +433,7 @@ for i in range(ITERATION):
     Po = set(graph_quotient.nodes())
     nbmax_communauté = len(Po)
 
-    popsize = 1000
+    popsize = POPSIZE
     TABMAXCOMMU = [i for i in range(1, nbmax_communauté + 1)]
     genome = []
     pop0 = []
@@ -449,7 +450,7 @@ for i in range(ITERATION):
 
     iter_mutate_rate = 0.05
     iter_tournament = 2
-    iter_maxbound = 35
+    iter_maxbound = NB_GENERATION
 
     communautés_final = GeneticAlgorithm(pop0, TABMAXCOMMU,
                                             colorProfile,
