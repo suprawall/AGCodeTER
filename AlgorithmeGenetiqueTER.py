@@ -1,7 +1,3 @@
-# * * Python GENETIC ALGORITHM
-# * * Author Franck Delaplace
-# * * TUTORIAL OF MASTER
-# * * Paris Saclay Unversity
 
 from random import randint, choice, sample
 from math import floor
