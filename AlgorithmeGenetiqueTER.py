@@ -1,5 +1,5 @@
-# Author: Hesters Valentin
-
+# AUTHOR: Hesters Valentin
+# DATE: 01/05/2024
 
 
 from random import randint, choice, sample
