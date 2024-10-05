@@ -1,3 +1,6 @@
+# Author: Hesters Valentin
+
+
 
 from random import randint, choice, sample
 from math import floor
