@@ -2,7 +2,6 @@
 from random import randint, choice, sample
 from math import floor
 from typing import TypeAlias, Callable
-import numpy as np
 from math import factorial, comb, ceil, exp, inf, log2
 from typing import TypeAlias, Callable
 from random import choices, random
@@ -12,7 +11,6 @@ from scipy.stats import gmean  # type: ignore
 import random
 
 import networkx as nx
-import seaborn as sns  # type: ignore
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -21,7 +19,6 @@ from collections import defaultdict
 from itertools import groupby
 from ga import GeneticAlgorithm
 import matplotlib.pyplot as plt
-import numpy as np
 import random as rd
 import networkx as nx
 import pandas as pd
@@ -382,123 +379,3 @@ def getViablegenome(graph, tabMaxCommu):
     
     return viableGenome
     
-def displayResult(graph, setCommunauté, entropie, position):
-    plt.figure(figsize=(10, 6))
-    plt.subplot(221)
-    plt.title("Détection de communauté sur ce graph ")
-    DrawColoredGraph(graph, pos=position)
-    plt.subplot(222)
-    plt.title("Algorithme génétique, entropie = "+str(entropie))
-    DrawChroCoS(graph, setCommunauté, theme="pastel", pos=position)
-    
-    P = ChroCoDe(G, r, radius=1, funenum=Gamma)
-    cp = nx.get_node_attributes(G, "color")
-    # Display the result
-    plt.subplot(223)
-    plt.title(
-        "CHROCODE - Hg="
-        + "{:.9e}".format(H(P, cp, 4, Gamma))
-        
-    )
-    DrawChroCoS(G, P, pos=position)
-    plt.show()
-    
-ITERATION = 1
-POPSIZE = 5000
-NB_GENERATION = 35
-minimums = None
-moyennes = None
-
-for i in range(ITERATION):
-    n = 40
-    r = 4
-
-    G = nx.connected_watts_strogatz_graph(n, 2, 0.6)
-
-    position = nx.circular_layout(G)
-    #gridposition = dict(zip(G, GD))  # define position as label of the initial graph
-
-    seeds = GenerateSeeds(G, r)
-    RandomColoring(G, seeds, density=0.3, transparency=0.0)
-    colorProfile = nx.get_node_attributes(G, "color")
-    nb_noeuds = len(G.nodes())
-
-    graph_quotient = nx.quotient_graph(
-                            G, MonochromeCommunityStructure(G)
-                            )  # Quotient graph of the monochrome community structure.
-    Po = set(graph_quotient.nodes())
-    nbmax_communauté = len(Po)
-
-    popsize = POPSIZE
-    TABMAXCOMMU = [i for i in range(1, nbmax_communauté + 1)]
-    genome = []
-    pop0 = []
-    progression = popsize / 10
-
-    for i in range(popsize):
-        if(len(pop0) > progression):
-            print("pop0 : "+str(progression))
-            progression += popsize / 10
-        pop0.append(getViablegenome(G, TABMAXCOMMU))
-
-
-    print("nombre de communautés dans le graph quotient: "+str(nbmax_communauté))
-
-    iter_mutate_rate = 0.05
-    iter_tournament = 2
-    iter_maxbound = NB_GENERATION
-
-    communautés_final = GeneticAlgorithm(pop0, TABMAXCOMMU,
-                                            colorProfile,
-                                            G,
-                                            r,
-                                            True,
-                                            maxbound=iter_maxbound, 
-                                            darwinianrate=1.0, crossrate=0.8, 
-                                            mutaterate=iter_mutate_rate, tournament=iter_tournament,
-                                            )
-    print("meilleur génome avec iter_maxbound = "+str(iter_maxbound)+" : ")
-    print(communautés_final)
-        
-    TraceMinimum = GetTrace()  
-    if(minimums is None):
-        minimums = [tup[0] for tup in TraceMinimum]
-        moyennes = [tup[1] for tup in TraceMinimum]
-    else:
-        for i,tup in enumerate(TraceMinimum):
-            if(minimums[i] != inf):
-                minimums[i] = minimums[i] + tup[0]
-            if(moyennes[i] != inf):
-                moyennes[i] = moyennes[i] + tup[1]
-            
-minimums_moyenne = [val/ITERATION for val in minimums]
-moyennes_moyenne = [val/ITERATION for val in moyennes]
-
-print("minimus_moyenne = "+str(minimums_moyenne))
-print("moyennes_moyenne = "+str(moyennes_moyenne))
-
-indices = list(range(1, len(TraceMinimum) + 1))  
-
-plt.figure(figsize=(10, 5))  
-
-plt.plot(indices, minimums_moyenne, marker='o', color='b', label='Minimums')
-plt.plot(indices, moyennes_moyenne, marker='s', color='r', label='Moyennes')
-
-
-plt.xlabel('Génération')
-plt.ylabel('Valeur')
-plt.title('Évolution des minimums, moyennes')
-plt.legend()
-plt.grid(True)
-plt.show()
-
-#displayResult(G, genereCommunauté(communautés_final[0]), communautés_final[1], position)
-
-
-
-
-
-
-
-
-
